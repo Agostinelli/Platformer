@@ -1,10 +1,13 @@
 package com.example.manfredi.platformer;
 
+import android.util.Log;
+
 /**
  * Created by Manfredi on 05/03/2017.
  */
 
 public class TestLevel extends LevelData {
+    private static final String TAG = "TestLevel";
     TestLevel() {
         mTiles = new int[][]{
                 {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -15,7 +18,7 @@ public class TestLevel extends LevelData {
                 {2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
                 {0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
                 {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-                {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                {0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
                 {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
                 {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
                 {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -27,5 +30,19 @@ public class TestLevel extends LevelData {
         mHeight = mTiles.length;
         mWidth = mTiles[0].length;
         mTileCount = super.countUniqueTiles();
+    }
+
+    public String getBitmapName(int tileType) {
+        String bitmapName = "";
+        switch (tileType) {
+            case 1:
+                return "player";
+            case 2:
+                return "grassy_ground";
+            default:
+                break;
+        }
+        Log.d(TAG, "detBitmapName: Unknown tileType: " + tileType);
+        return "";
     }
 }

@@ -31,10 +31,12 @@ public class Viewport {
         mScreenCentreY = mScreenYResolution / 2;
         mPixelsPerMetreX = mScreenXResolution / metresToShowX;
         mPixelsPerMetreY = mScreenYResolution / metresToShowY;
-        mMetresToShowX = metresToShowX + BUFFER;
-        mMetresToShowY = metresToShowY + BUFFER;
+        mMetresToShowX = metresToShowX;
+        mMetresToShowY = metresToShowY;
         mHalfDistX = (mMetresToShowX / 2);
         mHalfDistY = (mMetresToShowY / 2);
+        mMetresToShowX = metresToShowX + BUFFER;
+        mMetresToShowY = metresToShowY + BUFFER;
         mCurrentViewportWorldCentre = new PointF(0,0);
     }
 

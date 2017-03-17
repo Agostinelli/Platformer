@@ -6,7 +6,8 @@ import java.util.HashSet;
  * Created by Manfredi on 05/03/2017.
  */
 
-public class LevelData {
+public abstract class LevelData {
+    public static final int BACKGROUND = 0;
     int[][] mTiles;
     public int mHeight;
     public int mWidth;
@@ -23,4 +24,6 @@ public class LevelData {
         }
         return set.size();
     }
+
+    public abstract String getBitmapName(int tileType);
 }
