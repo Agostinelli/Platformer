@@ -80,7 +80,7 @@ public class Viewport {
         float maxY = (mCurrentViewportWorldCentre.y + mHalfDistY);
         float minY  = (mCurrentViewportWorldCentre.y - mHalfDistY)-objectHeight;
         if((worldPos.x > minX && worldPos.x < maxX)
-                && (worldPos.y > minY && worldPos.y < maxY)){
+                || (worldPos.y > minY && worldPos.y < maxY)){
             return true;
         }
         mClippedCount++; //for debugging

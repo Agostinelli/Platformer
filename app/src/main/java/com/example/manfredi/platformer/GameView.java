@@ -6,6 +6,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.PointF;
+import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -26,10 +28,10 @@ public class GameView extends SurfaceView implements Runnable {
 
     private boolean mDebugging = true;
 
-    FrameTimer mTimer;
-    Viewport mCamera;
-    LevelManager mLevelManager;
-
+    FrameTimer mTimer = null;
+    Viewport mCamera = null;
+    LevelManager mLevelManager = null;
+    InputManager mControl = null;
 
     private static final int METERS_TO_SHOW_X = 16; //TODO: move to xml
     private static final int METERS_TO_SHOW_Y = 9;
@@ -37,8 +39,24 @@ public class GameView extends SurfaceView implements Runnable {
     private static final int STAGE_HEIGHT = 1080/3;
     private static final boolean SCALE_CONTENT = true;
 
-    public GameView(final Context context) {
+    PointF mCameraPos = new PointF(0,0);
+    float mScrollSpeed = 2.0f; //meters per second
+
+
+    public GameView(Context context) {
         super(context);
+        init(context);
+    }
+    public GameView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init(context);
+    }
+    public GameView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        init(context);
+    }
+
+    private void init(Context context) {
         mContext = context;
         mPaint = new Paint();
         mSurfaceHolder = getHolder();
@@ -54,9 +72,17 @@ public class GameView extends SurfaceView implements Runnable {
         loadLevel("TestLevel");
     }
 
+    public void setInputManager(InputManager input) {
+        mControl = input;
+    }
+
     private void loadLevel(String levelName) {
         mLevelManager = new LevelManager(mContext, mCamera.getPixelsPerMetreX(), levelName);
-        mCamera.setWorldCentre(mLevelManager.mPlayer.mWorldLocation);
+
+        mCameraPos.x = mLevelManager.mPlayer.mWorldLocation.x;
+        mCameraPos.y = mLevelManager.mPlayer.mWorldLocation.y;
+
+        mCamera.setWorldCentre(mCameraPos);
 
     }
 
@@ -90,7 +116,12 @@ public class GameView extends SurfaceView implements Runnable {
             go.update(dt);
             go.mIsVisible = mCamera.inView(go.mWorldLocation, go.mWidth, go.mHeight);
         }
-        mCamera.setWorldCentre(mLevelManager.mPlayer.mWorldLocation);
+
+        float secondsPassed = dt/1000.0f;
+        mCameraPos.x += (mControl.mHorizontalFactor*mScrollSpeed)*secondsPassed;
+        mCameraPos.y += (mControl.mVerticalFactor*mScrollSpeed)*secondsPassed;
+
+        mCamera.setWorldCentre(mCameraPos);
     }
 
     private void render() {
@@ -127,6 +158,9 @@ public class GameView extends SurfaceView implements Runnable {
         mCanvas.drawText("Sprites: " + mLevelManager.mGameObjects.size(), 10, y, mPaint);
         y+=texSize;
         mCanvas.drawText("Clipped: " + mCamera.getClipCount(), 10, y, mPaint);
+        y+=texSize;
+
+        mCanvas.drawText("[" + mControl.mHorizontalFactor + " : " + mControl.mVerticalFactor + "] isJumping: " + mControl.mIsJumping, 10, y, mPaint);
         mCamera.resetClipCount();
     }
 
