@@ -16,8 +16,10 @@ public class LevelManager {
     ArrayList<GameObject> mGameObjects;
     LevelData mData;
     Player mPlayer;
+    GameView mEngine = null;
 
-    LevelManager(Context context, int pixelsPerMeter, String levelName) {
+    LevelManager(final GameView engine, String levelName) {
+        mEngine = engine;
         switch (levelName) {
             default:
                 mData = new TestLevel();
@@ -25,32 +27,30 @@ public class LevelManager {
         }
         mGameObjects = new ArrayList<>();
         mBitmaps = new Bitmap[mData.mTileCount];
-        loadMapAssets(context, pixelsPerMeter);
+        loadMapAssets();
     }
 
     public Bitmap getBitmap(int tileType) {
         return mBitmaps[tileType];
     }
 
-    private void loadMapAssets(Context context, int pixelsPerMeter) {
+    private void loadMapAssets() {
         int tileType;
         GameObject temp;
         for(int y = 0; y < mData.mHeight; y++) {
             int width = mData.mTiles[y].length;
-            for(int x = 0; x < mData.mWidth; x++) {
+            for(int x = 0; x < width; x++) {
                 tileType = mData.mTiles[y][x];
                 if (tileType == LevelData.BACKGROUND) {
                     continue;
                 }
                 temp = createGameObject(tileType, x, y);
                 if (temp != null) {
-                    loadBitmap(temp, context, pixelsPerMeter);
+                    loadBitmap(temp, mEngine.getContext(), mEngine.getPixelsPerMeter());
                     mGameObjects.add(temp);
                 }
             }
         }
-
-
     }
 
     private GameObject createGameObject(final int tileType,final int x,final int y) {
@@ -61,11 +61,11 @@ public class LevelManager {
                     Log.d(TAG, "BAD LevelData - duplicate player definition!" + tileType);
                     break;
                 }
-                mPlayer = new Player(x, y, tileType);
+                mPlayer = new Player(mEngine, x, y, tileType);
                 o = mPlayer;
                 break;
             case 2:
-                o = new GroundTile(x, y, tileType);
+                o = new GameObject(mEngine, x, y, tileType);
                 break;
             default:
                 Log.d(TAG, "NO game object");

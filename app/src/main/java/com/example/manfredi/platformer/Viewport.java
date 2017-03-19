@@ -21,6 +21,7 @@ public class Viewport {
     private float mHalfDistX;
     private float mHalfDistY;
     private int mClippedCount;
+    private GameObject mTarget = null;
 
     private final static int BUFFER = 2;
 
@@ -38,6 +39,16 @@ public class Viewport {
         mMetresToShowX = metresToShowX + BUFFER;
         mMetresToShowY = metresToShowY + BUFFER;
         mCurrentViewportWorldCentre = new PointF(0,0);
+    }
+
+    public void setTarget(final GameObject go) {
+        mTarget = go;
+    }
+
+    public void update(float dt) {
+        if(mTarget == null) { return; }
+        mCurrentViewportWorldCentre.x += (mTarget.mWorldLocation.x-mCurrentViewportWorldCentre.x)*0.125;
+        mCurrentViewportWorldCentre.y += (mTarget.mWorldLocation.y-mCurrentViewportWorldCentre.y)*0.25;
     }
 
     public int getScreenWidth() {

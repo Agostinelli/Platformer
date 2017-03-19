@@ -6,6 +6,7 @@ package com.example.manfredi.platformer;
 
 public class FrameTimer {
     private static final long SECOND = 1000;
+    private static final float TO_SECONDS = 1000.0f;
     private long mStartFrameTime = 0;
     private long mElapsedTime = 0;
     private long mFrameCount = 0;
@@ -23,11 +24,11 @@ public class FrameTimer {
         mFrameCount = 0;
     }
 
-    public long onEnterFrame() {
+    public float onEnterFrame() {
         mFrameCount++;
         mElapsedTime = System.currentTimeMillis()-mStartFrameTime;
         mStartFrameTime = System.currentTimeMillis();
-        return mElapsedTime;
+        return mElapsedTime / TO_SECONDS;
     }
 
     public long getCurrentFPS() {

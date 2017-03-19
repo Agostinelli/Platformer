@@ -11,6 +11,8 @@ import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import java.util.ArrayList;
+
 /**
  * Created by Manfredi on 01/03/2017.
  */
@@ -32,16 +34,13 @@ public class GameView extends SurfaceView implements Runnable {
     Viewport mCamera = null;
     LevelManager mLevelManager = null;
     InputManager mControl = null;
+    ArrayList<GameObject> mActiveEntities = null;
 
     private static final int METERS_TO_SHOW_X = 16; //TODO: move to xml
     private static final int METERS_TO_SHOW_Y = 9;
     private static final int STAGE_WIDTH = 1920/3;
     private static final int STAGE_HEIGHT = 1080/3;
     private static final boolean SCALE_CONTENT = true;
-
-    PointF mCameraPos = new PointF(0,0);
-    float mScrollSpeed = 2.0f; //meters per second
-
 
     public GameView(Context context) {
         super(context);
@@ -57,10 +56,27 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
     private void init(Context context) {
+        mActiveEntities = new ArrayList<GameObject>();
         mContext = context;
         mPaint = new Paint();
         mSurfaceHolder = getHolder();
         mTimer = new FrameTimer();
+        mControl = new NullInput();
+        createViewport();
+        loadLevel("TestLevel");
+    }
+
+    public int getPixelsPerMeter() { return mCamera.getPixelsPerMetreX(); }
+    public void setInputManager(InputManager input) { mControl = input; }
+
+    public Bitmap getBitmap(int tileType) {
+        return mLevelManager.getBitmap(tileType);
+    }
+    public void setScreenCoordinate(final PointF worldLocation, Point screenCoord) {
+        mCamera.worldToScreen(worldLocation, screenCoord);
+    }
+
+    public void createViewport() {
         int screenWidth = getResources().getDisplayMetrics().widthPixels;
         int screenHeight = getResources().getDisplayMetrics().heightPixels;
         if (SCALE_CONTENT) {
@@ -69,21 +85,12 @@ public class GameView extends SurfaceView implements Runnable {
             screenHeight = STAGE_HEIGHT;
         }
         mCamera = new Viewport(screenWidth, screenHeight, METERS_TO_SHOW_X, METERS_TO_SHOW_Y);
-        loadLevel("TestLevel");
-    }
-
-    public void setInputManager(InputManager input) {
-        mControl = input;
     }
 
     private void loadLevel(String levelName) {
-        mLevelManager = new LevelManager(mContext, mCamera.getPixelsPerMetreX(), levelName);
-
-        mCameraPos.x = mLevelManager.mPlayer.mWorldLocation.x;
-        mCameraPos.y = mLevelManager.mPlayer.mWorldLocation.y;
-
-        mCamera.setWorldCentre(mCameraPos);
-
+        mLevelManager = new LevelManager(this, levelName);
+        mCamera.setWorldCentre(mLevelManager.mPlayer.mWorldLocation);
+        mCamera.setTarget(mLevelManager.mPlayer);
     }
 
     public void pause() {
@@ -111,34 +118,42 @@ public class GameView extends SurfaceView implements Runnable {
 
     }
 
-    private void update(long dt) {
+    private void update(float secondsPassed) {
+        mActiveEntities.clear();
+        mCamera.update(secondsPassed);
         for(GameObject go : mLevelManager.mGameObjects) {
-            go.update(dt);
-            go.mIsVisible = mCamera.inView(go.mWorldLocation, go.mWidth, go.mHeight);
+            go.update(secondsPassed);
+            if(mCamera.inView(go.mWorldLocation, go.mWidth, go.mHeight)) {
+                mActiveEntities.add(go);
+            }
         }
+        doCollisionChecks();
+    }
 
-        float secondsPassed = dt/1000.0f;
-        mCameraPos.x += (mControl.mHorizontalFactor*mScrollSpeed)*secondsPassed;
-        mCameraPos.y += (mControl.mVerticalFactor*mScrollSpeed)*secondsPassed;
-
-        mCamera.setWorldCentre(mCameraPos);
+    private void doCollisionChecks() {
+        Player player = mLevelManager.mPlayer;
+        int count = mActiveEntities.size();
+        GameObject a, b;
+        for(int i = 0; i < count-1; i++) {
+            a = mActiveEntities.get(i);
+            for(int j = i+1; j < count; j++) {
+                b = mActiveEntities.get(j);
+                if(a.isColliding(b)) {
+                    a.onCollision(b);
+                    b.onCollision(a);
+                }
+            }
+        }
     }
 
     private void render() {
         if (!lockAndSetCanvas()) {
             return;
         }
-        Point screenCoord = new Point();
         mCanvas.drawColor(BG_COLOR);
         mPaint.setColor(Color.WHITE);
-
-        for(GameObject go : mLevelManager.mGameObjects) {
-            if(!go.mIsVisible) {
-                //continue;
-            }
-            mCamera.worldToScreen(go.mWorldLocation, screenCoord);
-            Bitmap b = mLevelManager.getBitmap(go.mType);
-            mCanvas.drawBitmap(b, screenCoord.x, screenCoord.y, mPaint);
+        for(GameObject go : mActiveEntities) {
+            go.render(mCanvas, mPaint);
         }
 
         if(mDebugging) {
@@ -155,13 +170,11 @@ public class GameView extends SurfaceView implements Runnable {
         mPaint.setColor(Color.WHITE);
         mCanvas.drawText("FPS: " + mTimer.getCurrentFPS(), 10, y, mPaint);
         y+=texSize;
-        mCanvas.drawText("Sprites: " + mLevelManager.mGameObjects.size(), 10, y, mPaint);
+        mCanvas.drawText("Rendered Sprites: " + mActiveEntities.size() + "/" + mLevelManager.mGameObjects.size(), 10, y, mPaint);
         y+=texSize;
-        mCanvas.drawText("Clipped: " + mCamera.getClipCount(), 10, y, mPaint);
-        y+=texSize;
-
         mCanvas.drawText("[" + mControl.mHorizontalFactor + " : " + mControl.mVerticalFactor + "] isJumping: " + mControl.mIsJumping, 10, y, mPaint);
-        mCamera.resetClipCount();
+        y+=texSize;
+        //mCanvas.drawText("Player: [" + playerPos.x + " , " + playerPos.y + "]", 10, y, mPaint);
     }
 
     private boolean lockAndSetCanvas() {
@@ -184,5 +197,4 @@ public class GameView extends SurfaceView implements Runnable {
             //mTimer.endFrame();
         }
     }
-
 }
