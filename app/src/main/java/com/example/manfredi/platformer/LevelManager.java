@@ -11,7 +11,7 @@ import java.util.ArrayList;
  */
 
 public class LevelManager {
-    private static final String TAG = "LevelManager";
+    private static final String TAG = App.getContext().getString(R.string.LevelManagerTag);
     private Bitmap[] mBitmaps;
     ArrayList<GameObject> mGameObjects;
     LevelData mData;
@@ -58,7 +58,7 @@ public class LevelManager {
         switch (tileType) {
             case 1:
                 if(mPlayer != null) {
-                    Log.d(TAG, "BAD LevelData - duplicate player definition!" + tileType);
+                    Log.d(TAG, App.getContext().getString(R.string.duplicatePlayerError) + tileType);
                     break;
                 }
                 mPlayer = new Player(mEngine, x, y, tileType);
@@ -74,7 +74,7 @@ public class LevelManager {
                 o = new GameObject(mEngine, x, y, tileType);
                 break;
             default:
-                Log.d(TAG, "NO game object");
+                Log.d(TAG, App.getContext().getString(R.string.nogameobjecterror));
                 break;
         }
         return o;

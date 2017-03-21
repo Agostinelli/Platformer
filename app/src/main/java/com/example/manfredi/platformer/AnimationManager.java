@@ -12,6 +12,7 @@ import java.util.Random;
  */
 
 public class AnimationManager {
+    private static final float SECOND = Float.parseFloat(App.getContext().getString(R.string.SECOND));
     private GameView mEngine = null;
     private AnimationDrawable mAnim = null;
     private Bitmap[] mFrames = null;
@@ -63,7 +64,7 @@ public class AnimationManager {
     }
 
     public void update(float dt) {
-        long elapsedMillis = (long) (1000f*dt); // TODO declare second
+        long elapsedMillis = (long) (SECOND*dt);
         mCurrentAnimTime += elapsedMillis;
         if(mCurrentAnimTime > mDuration) {
             if(mAnim.isOneShot()) {

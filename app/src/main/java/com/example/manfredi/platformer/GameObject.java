@@ -15,10 +15,11 @@ import android.graphics.RectF;
  */
 
 public class GameObject {
+    private static final float HALF = Float.parseFloat(App.getContext().getString(R.string.HALF));
     public static Point screenCoord = new Point();
-    public static final int HEIGHT = 1;
-    public static final int WIDTH = 1;
-    public static final float PRECISION = 100.0f;
+    public static final int HEIGHT = App.getContext().getResources().getInteger(R.integer.height);
+    public static final int WIDTH = App.getContext().getResources().getInteger(R.integer.width);
+    public static final float PRECISION = Float.parseFloat(App.getContext().getString(R.string.PRECISION));
     public RectF mBounds = new RectF(0.0f, 0.0f, WIDTH, HEIGHT);
     public PointF mWorldLocation = new PointF(0.0f, 0.0f);
     public float mWidth = HEIGHT;
@@ -101,17 +102,17 @@ public class GameObject {
 
 
     //SAT intersection test. http://www.metanetsoftware.com/technique/tutorialA.html
-//returns true on intersection, and sets the least intersecting axis in overlap
+    //returns true on intersection, and sets the least intersecting axis in overlap
     protected static PointF overlap = new PointF(0,0);
     public static boolean getOverlap(GameObject a, GameObject b, PointF overlap) {
         overlap.set(0f, 0f);
         float centerDeltaX = a.mBounds.centerX() - b.mBounds.centerX();
-        float halfWidths = (a.mWidth + b.mWidth) * 0.5f;
+        float halfWidths = (a.mWidth + b.mWidth) * HALF;
 
         if (Math.abs(centerDeltaX) > halfWidths) return false; //no overlap on x == no collision
 
         float centerDeltaY = a.mBounds.centerY() - b.mBounds.centerY();
-        float halfHeights = (a.mHeight + b.mHeight) * 0.5f;
+        float halfHeights = (a.mHeight + b.mHeight) * HALF;
 
         if (Math.abs(centerDeltaY) > halfHeights) return false; //no overlap on y == no collision
 
@@ -138,10 +139,10 @@ public class GameObject {
     }
 
     public Bitmap prepareBitmap(Context context, String bitmapName, int pixelsPerMeter) throws Exception {
-        int resId = context.getResources().getIdentifier(bitmapName, "drawable", context.getPackageName());
+        int resId = context.getResources().getIdentifier(bitmapName, context.getString(R.string.drawable), context.getPackageName());
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resId);
         if(bitmap == null) {
-            throw new Exception("No bitmap named " + bitmapName);
+            throw new Exception(context.getString(R.string.noBitmaperror) + bitmapName);
         }
         bitmap = Bitmap.createScaledBitmap(bitmap, (int)(mWidth*pixelsPerMeter), (int)(mHeight*pixelsPerMeter), false);
         return bitmap;

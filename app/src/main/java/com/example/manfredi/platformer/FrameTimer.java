@@ -5,8 +5,8 @@ package com.example.manfredi.platformer;
  */
 
 public class FrameTimer {
-    private static final long SECOND = 1000;
-    private static final float TO_SECONDS = 1000.0f;
+    private static final long SECOND = App.getContext().getResources().getInteger(R.integer.second);
+    private static final float TO_SECONDS = Float.parseFloat(App.getContext().getString(R.string.SECOND));
     private long mStartFrameTime = 0;
     private long mElapsedTime = 0;
     private long mFrameCount = 0;

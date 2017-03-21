@@ -17,6 +17,7 @@ import java.io.IOException;
  */
 
 public class Jukebox {
+    private static final String TAG = App.getContext().getString(R.string.jukeboxTag);
     private SoundPool mSoundPool;
     private final int MAX_STREAMS = 5;
     public static int LEVEL;
@@ -56,17 +57,17 @@ public class Jukebox {
         try {
             AssetManager assetManager = context.getAssets();
             AssetFileDescriptor descriptor;
-            descriptor = assetManager.openFd("level.ogg");
+            descriptor = assetManager.openFd(context.getString(R.string.levelSound));
             LEVEL = mSoundPool.load(descriptor, 0);
-            descriptor = assetManager.openFd("jump.ogg");
+            descriptor = assetManager.openFd(context.getString(R.string.jumpSound));
             JUMP = mSoundPool.load(descriptor, 0);
-            descriptor = assetManager.openFd("hit.ogg");
+            descriptor = assetManager.openFd(context.getString(R.string.hitSound));
             HIT = mSoundPool.load(descriptor, 0);
-            descriptor = assetManager.openFd("pickup.ogg");
+            descriptor = assetManager.openFd(context.getString(R.string.pickupsound));
             PICKUP = mSoundPool.load(descriptor, 0);
         }
         catch (IOException e) {
-            Log.e("TAG", e.getMessage());
+            Log.e(TAG, e.getMessage());
         }
     }
 

@@ -11,7 +11,9 @@ import android.graphics.Paint;
 public class HUD {
     private Paint mPaint = null;
     private Canvas mCanvas = null;
-    private int mY = 32;
+    private int mY = App.getContext().getResources().getInteger(R.integer.testPositionY);
+    private int mTextSize = App.getContext().getResources().getInteger(R.integer.textSize);
+    private int mIndex = App.getContext().getResources().getInteger(R.integer.index);
 
     public HUD(Paint mPaint, Canvas mCanvas) {
         this.mPaint = mPaint;
@@ -19,15 +21,14 @@ public class HUD {
     }
 
     public void drawText(String text) {
-        int texSize = 32;
-        mPaint.setTextSize(texSize);
+        mPaint.setTextSize(mTextSize);
         mPaint.setTextAlign(Paint.Align.LEFT);
         mPaint.setColor(Color.WHITE);
-        mCanvas.drawText(text, 10, mY, mPaint);
-        mY+=texSize;
+        mCanvas.drawText(text, mIndex, mY, mPaint);
+        mY+=mTextSize;
     }
 
     public void displayHealth(Player player) {
-        drawText("Health: " + player.getHealth());
+        drawText(App.getContext().getString(R.string.health) + player.getHealth());
     }
 }

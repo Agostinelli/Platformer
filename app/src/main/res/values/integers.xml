@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="left">1</integer>
+    <integer name="right">-1</integer>
+    <integer name="damage">20</integer>
+    <integer name="health">100</integer>
+    <integer name="testPositionY">32</integer>
+    <integer name="textSize">32</integer>
+    <integer name="index">10</integer>
+    <integer name="second">1000</integer>
+    <integer name="height">1</integer>
+    <integer name="width">1</integer>
+    <integer name="coinType">3</integer>
+    <integer name="METERS_TO_SHOW_X">16</integer>
+    <integer name="METERS_TO_SHOW_Y">9</integer>
+</resources>

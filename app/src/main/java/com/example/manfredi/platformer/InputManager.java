@@ -5,8 +5,8 @@ package com.example.manfredi.platformer;
  */
 
 public abstract class InputManager {
-    public float mVerticalFactor = 0.0f;
-    public float mHorizontalFactor = 0.0f;
+    public float mVerticalFactor = Float.parseFloat(App.getContext().getString(R.string.VERTICAL_FACTOR));
+    public float mHorizontalFactor = Float.parseFloat(App.getContext().getString(R.string.HORIZONTAL_FACTOR));
     public boolean mIsJumping = false;
 
     public void onStart() {}

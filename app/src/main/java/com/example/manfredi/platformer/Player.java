@@ -9,27 +9,25 @@ import android.util.Log;
  */
 
 public class Player extends DynamicGameObject {
-    private static final String TAG = "DynamicGameObject";
-    private static final float PLAYER_HEIGHT = 2.0f; //TODO move to xml - meters
-    private static final float PLAYER_WIDTH = 1.0f;
-    private static final float PLAYER_RUN_SPEED = 6.0f;
-    private static final float PLAYER_FRICTION = 0.98f;
-    private static final float PLAYER_ACCELERATION_X = 0.75f;
-    private static final float PLAYER_ACCELARATION_Y = 0.2f;
-    private static final float PLAYER_JUMP_HEIGHT = 3f;
-    private static final float PLAYER_JUMP_DURATION = 0.180f;
+    private static final String TAG = App.getContext().getString(R.string.dynamicGameObjectTag);
+    private static final float PLAYER_HEIGHT = Float.parseFloat(App.getContext().getString(R.string.PLAYER_HEIGHT));
+    private static final float PLAYER_WIDTH = Float.parseFloat(App.getContext().getString(R.string.PLAYER_WIDTH));
+    private static final float PLAYER_RUN_SPEED = Float.parseFloat(App.getContext().getString(R.string.PLAYER_RUN_SPEED));
+    private static final float PLAYER_FRICTION = Float.parseFloat(App.getContext().getString(R.string.PLAYER_FRICTION));
+    private static final float PLAYER_ACCELERATION_X = Float.parseFloat(App.getContext().getString(R.string.PLAYER_ACCELERATION_X));
+    private static final float PLAYER_ACCELERATION_Y = Float.parseFloat(App.getContext().getString(R.string.PLAYER_ACCELERATION_Y));
+    private static final float PLAYER_JUMP_HEIGHT = Float.parseFloat(App.getContext().getString(R.string.PLAYER_JUMP_HEIGHT));
+    private static final float PLAYER_JUMP_DURATION = Float.parseFloat(App.getContext().getString(R.string.PLAYER_JUMP_DURATION));
     private static final float PLAYER_JUMP_IMPULSE = -(PLAYER_JUMP_HEIGHT/PLAYER_JUMP_DURATION);
-    private static final float MAX_VELOCITY = 6f; // running speed
-    private static final float ACCEL_X = 0.125f;
-    private static final float ACCEL_Y = 0.15f;
-    private static final float JUMP_INPULSE = -8f;
+    private static final int DAMAGE = App.getContext().getResources().getInteger(R.integer.damage);
+    private static final int HEALTH = App.getContext().getResources().getInteger(R.integer.health);
 
-    private static final int LEFT = 1;
-    private static final int RIGHT = -1;
+    private static final int LEFT = App.getContext().getResources().getInteger(R.integer.left);
+    private static final int RIGHT = App.getContext().getResources().getInteger(R.integer.right);
 
     private boolean mIsOnGround = false;
     private int mFacing = LEFT;
-    private float mJumpTime = 0.0f;
+    private float mJumpTime = Float.parseFloat(App.getContext().getString(R.string.JUMP_TIME));
     private AnimationManager mAnim = null;
 
     private int mCoins;
@@ -44,7 +42,7 @@ public class Player extends DynamicGameObject {
     }
 
     public void decreaseHealth() {
-        this.mHealth -= 20;
+        this.mHealth -= DAMAGE;
     }
 
     public int getCoins() {
@@ -59,9 +57,9 @@ public class Player extends DynamicGameObject {
         super(engine, x, y, PLAYER_WIDTH, PLAYER_HEIGHT, type);
         mJukebox = new Jukebox(engine.getContext());
         mCoins = 0;
-        mHealth = 100;
+        mHealth = HEALTH;
         mAcceleration.x = PLAYER_ACCELERATION_X;
-        mAcceleration.y = PLAYER_ACCELARATION_Y;
+        mAcceleration.y = PLAYER_ACCELERATION_Y;
         mFriction = PLAYER_FRICTION;
         mAnim = new AnimationManager(engine, R.drawable.player_anim, PLAYER_WIDTH, PLAYER_HEIGHT);
 

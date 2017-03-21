@@ -7,7 +7,7 @@ import android.util.Log;
  */
 
 public class TestLevel extends LevelData {
-    private static final String TAG = "TestLevel";
+    private static final String TAG = App.getContext().getString(R.string.testlevelTag);
     TestLevel() {
         mTiles = new int[][]{
                 {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -33,20 +33,20 @@ public class TestLevel extends LevelData {
     }
 
     public String getBitmapName(int tileType) {
-        String filename = "nullsprite";
+        String filename = App.getContext().getString(R.string.nullsprite);
         switch (tileType) {
             case 1:
-                return "player";
+                return App.getContext().getString(R.string.player);
             case 2:
-                return "grassy_ground";
+                return App.getContext().getString(R.string.grass);
             case 3:
-                return "coinyellow";
+                return App.getContext().getString(R.string.coin);
             case 4:
-                return "spearsdown_brown";
+                return App.getContext().getString(R.string.spears);
             default:
                 break;
         }
-        Log.d(TAG, "detBitmapName: Unknown tileType: " + tileType);
+        Log.d(TAG, App.getContext().getString(R.string.uknownTileTypeError) + tileType);
         return "";
     }
 }

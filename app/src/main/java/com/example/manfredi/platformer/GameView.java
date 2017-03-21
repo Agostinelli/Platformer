@@ -18,7 +18,7 @@ import java.util.ArrayList;
  */
 
 public class GameView extends SurfaceView implements Runnable {
-    private static final String TAG = "GameView";
+    private static final String TAG = App.getContext().getString(R.string.gameViewTag);
     private static final int BG_COLOR = Color.rgb(135, 206, 235);//sky blue
 
     private volatile boolean mIsRunning = false;
@@ -39,8 +39,9 @@ public class GameView extends SurfaceView implements Runnable {
     HUD mHUD = null;
     private Jukebox mJukebox;
 
-    private static final int METERS_TO_SHOW_X = 16; //TODO: move to xml
-    private static final int METERS_TO_SHOW_Y = 9;
+    private static final int coinType = App.getContext().getResources().getInteger(R.integer.coinType);
+    private static final int METERS_TO_SHOW_X = App.getContext().getResources().getInteger(R.integer.METERS_TO_SHOW_X);
+    private static final int METERS_TO_SHOW_Y = App.getContext().getResources().getInteger(R.integer.METERS_TO_SHOW_Y);
     private static final int STAGE_WIDTH = 1920/3;
     private static final int STAGE_HEIGHT = 1080/3;
     private static final boolean SCALE_CONTENT = true;
@@ -129,7 +130,7 @@ public class GameView extends SurfaceView implements Runnable {
         mCamera.update(secondsPassed);
         for(GameObject go : mLevelManager.mGameObjects) {
             go.update(secondsPassed);
-            if(go.getType() == 3) {
+            if(go.getType() == coinType) {
                 mCoins.add(go);
             }
             if(mCamera.inView(go.mWorldLocation, go.mWidth, go.mHeight)) {
