@@ -32,9 +32,12 @@ public class GameView extends SurfaceView implements Runnable {
 
     FrameTimer mTimer = null;
     Viewport mCamera = null;
-    LevelManager mLevelManager = null;
+    public static LevelManager mLevelManager = null;
     InputManager mControl = null;
     ArrayList<GameObject> mActiveEntities = null;
+    ArrayList<GameObject> mCoins = null;
+    HUD mHUD = null;
+    private Jukebox mJukebox;
 
     private static final int METERS_TO_SHOW_X = 16; //TODO: move to xml
     private static final int METERS_TO_SHOW_Y = 9;
@@ -56,6 +59,8 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
     private void init(Context context) {
+        mJukebox = new Jukebox(context);
+        mCoins = new ArrayList<GameObject>();
         mActiveEntities = new ArrayList<GameObject>();
         mContext = context;
         mPaint = new Paint();
@@ -119,10 +124,14 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
     private void update(float secondsPassed) {
+        mCoins.clear();
         mActiveEntities.clear();
         mCamera.update(secondsPassed);
         for(GameObject go : mLevelManager.mGameObjects) {
             go.update(secondsPassed);
+            if(go.getType() == 3) {
+                mCoins.add(go);
+            }
             if(mCamera.inView(go.mWorldLocation, go.mWidth, go.mHeight)) {
                 mActiveEntities.add(go);
             }
@@ -157,24 +166,15 @@ public class GameView extends SurfaceView implements Runnable {
         }
 
         if(mDebugging) {
-            doDebugDrawing();
+            HUD();
         }
         mSurfaceHolder.unlockCanvasAndPost(mCanvas);
     }
 
-    private void doDebugDrawing() {
-        int y = 60;
-        int texSize = 32;
-        mPaint.setTextSize(texSize);
-        mPaint.setTextAlign(Paint.Align.LEFT);
-        mPaint.setColor(Color.WHITE);
-        mCanvas.drawText("FPS: " + mTimer.getCurrentFPS(), 10, y, mPaint);
-        y+=texSize;
-        mCanvas.drawText("Rendered Sprites: " + mActiveEntities.size() + "/" + mLevelManager.mGameObjects.size(), 10, y, mPaint);
-        y+=texSize;
-        mCanvas.drawText("[" + mControl.mHorizontalFactor + " : " + mControl.mVerticalFactor + "] isJumping: " + mControl.mIsJumping, 10, y, mPaint);
-        y+=texSize;
-        //mCanvas.drawText("Player: [" + playerPos.x + " , " + playerPos.y + "]", 10, y, mPaint);
+    private void HUD() {
+        mHUD = new HUD(mPaint, mCanvas);
+        mHUD.displayHealth(mLevelManager.mPlayer);
+        mHUD.drawText(getContext().getString(R.string.collectibles) + mLevelManager.mPlayer.getCoins() + "/" + mCoins.size());
     }
 
     private boolean lockAndSetCanvas() {
@@ -191,7 +191,9 @@ public class GameView extends SurfaceView implements Runnable {
     @Override
     public void run() {
         mTimer.reset();
+        //mJukebox.playForever(Jukebox.LEVEL);
         while(mIsRunning) {
+            //mJukebox.playForever(Jukebox.LEVEL);
             update(mTimer.onEnterFrame());
             render();
             //mTimer.endFrame();

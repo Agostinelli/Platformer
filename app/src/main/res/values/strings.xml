@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Platformer</string>
+    <string name="collectibles">"Collectibles: "</string>
+    <string name="OverlapError">getOverlap false negative. Always check AABB first!</string>
 </resources>

@@ -28,6 +28,8 @@ public class GameObject {
     protected GameView mEngine;
     protected Matrix mTransform = new Matrix();
 
+    private Jukebox mJukebox;
+
     GameObject(final GameView engine, final float x, final float y, final float width, final float height, final int type) {
         init(engine, x, y, width, height, type);
     }
@@ -37,6 +39,7 @@ public class GameObject {
     }
 
     private void init(final GameView engine, final float x, final float y, final float width, final float height, final int type) {
+        mJukebox = new Jukebox(engine.getContext());
         mEngine = engine;
         mType = type;
         mHeight = height;
@@ -46,7 +49,7 @@ public class GameObject {
         updateBounds();
     }
 
-    public void render(Canvas canvas,Paint paint) {
+    public void render(Canvas canvas, Paint paint) {
         mTransform.reset();
         mEngine.setScreenCoordinate(mWorldLocation, GameObject.screenCoord);
         mTransform.postTranslate(GameObject.screenCoord.x, GameObject.screenCoord.y);
@@ -62,8 +65,40 @@ public class GameObject {
     }
 
     public void onCollision(final GameObject that) {
-
+        coinPickUp(that);
+        healthDamage(that);
     }
+
+    private void healthDamage(GameObject that) {
+        if(this.getType() == 4 || that.getType() == 4) {
+            Player player;
+            if(this.getType() == 1) {
+                player = (Player) this;
+            }
+            player = (Player) that;
+            player.decreaseHealth();
+            mJukebox.play(Jukebox.HIT);
+        }
+    }
+
+    private void coinPickUp(GameObject that) {
+        if(this.getType() == 3 || that.getType() == 3) {
+            Player player;
+            GameObject coin;
+            if(this.getType() == 1) {
+                player = (Player) this;
+                coin = that;
+            }
+            player = (Player) that;
+            coin = this;
+            player.coinPickedUp();
+            mJukebox.play(Jukebox.PICKUP);
+            GameView.mLevelManager.mGameObjects.remove(coin);
+            //Log.d("TEST", "COINS: " + player.getCoins());
+
+        }
+    }
+
 
     //SAT intersection test. http://www.metanetsoftware.com/technique/tutorialA.html
 //returns true on intersection, and sets the least intersecting axis in overlap
@@ -110,5 +145,9 @@ public class GameObject {
         }
         bitmap = Bitmap.createScaledBitmap(bitmap, (int)(mWidth*pixelsPerMeter), (int)(mHeight*pixelsPerMeter), false);
         return bitmap;
+    }
+
+    public int getType() {
+        return mType;
     }
 }

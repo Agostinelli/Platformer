@@ -67,6 +67,12 @@ public class LevelManager {
             case 2:
                 o = new GameObject(mEngine, x, y, tileType);
                 break;
+            case 3:
+                o = new GameObject(mEngine, x, y, tileType);
+                break;
+            case 4:
+                o = new GameObject(mEngine, x, y, tileType);
+                break;
             default:
                 Log.d(TAG, "NO game object");
                 break;

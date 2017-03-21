@@ -32,10 +32,34 @@ public class Player extends DynamicGameObject {
     private float mJumpTime = 0.0f;
     private AnimationManager mAnim = null;
 
+    private int mCoins;
+    private int mHealth;
 
+    private Jukebox mJukebox;
+
+
+
+    public int getHealth() {
+        return mHealth;
+    }
+
+    public void decreaseHealth() {
+        this.mHealth -= 20;
+    }
+
+    public int getCoins() {
+        return mCoins;
+    }
+
+    public void coinPickedUp() {
+        this.mCoins += 1;
+    }
 
     Player(final GameView engine, final float x, final float y, final int type) {
         super(engine, x, y, PLAYER_WIDTH, PLAYER_HEIGHT, type);
+        mJukebox = new Jukebox(engine.getContext());
+        mCoins = 0;
+        mHealth = 100;
         mAcceleration.x = PLAYER_ACCELERATION_X;
         mAcceleration.y = PLAYER_ACCELARATION_Y;
         mFriction = PLAYER_FRICTION;
@@ -46,7 +70,7 @@ public class Player extends DynamicGameObject {
     @Override
     public void onCollision(final GameObject that) {
         if(!GameObject.getOverlap(this, that, overlap)) {
-            Log.d(TAG, "getOverlap false negative. Always check AABB first!");
+            Log.d(TAG, mEngine.getContext().getString(R.string.OverlapError));
         }
         if (overlap.y != 0) {
             mVelocity.y = 0;
@@ -92,6 +116,7 @@ public class Player extends DynamicGameObject {
         mTargetSpeed.x = mEngine.mControl.mHorizontalFactor * (PLAYER_RUN_SPEED * dt);
 
         if(mEngine.mControl.mIsJumping && mJumpTime < PLAYER_JUMP_DURATION) {
+            mJukebox.play(Jukebox.JUMP);
             mVelocity.y = (PLAYER_JUMP_IMPULSE * dt);
             mJumpTime += dt;
             mIsOnGround = false;

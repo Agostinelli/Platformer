@@ -9,17 +9,17 @@ import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
     GameView mGameView = null;
-
+    Jukebox mJukebox = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         hideSystemUI();
         setContentView(R.layout.activity_main);
+        mJukebox = new Jukebox(getBaseContext());
+        mJukebox.playForever(Jukebox.LEVEL);
         mGameView = (GameView) findViewById(R.id.gameView);
         mGameView.setInputManager(new BasicInputManager(findViewById(R.id.keypad)));
-        //mGameView = new GameView(this);
-        //setContentView(mGameView);
     }
 
     @Override
