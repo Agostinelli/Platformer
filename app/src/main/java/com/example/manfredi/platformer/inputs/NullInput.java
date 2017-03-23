@@ -1,4 +1,4 @@
-package com.example.manfredi.platformer;
+package com.example.manfredi.platformer.inputs;
 
 /**
  * Created by Manfredi on 18/03/2017.

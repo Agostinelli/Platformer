@@ -4,6 +4,11 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import com.example.manfredi.platformer.engine.GameEngine;
+import com.example.manfredi.platformer.gameobjects.DebugTextGameObject;
+import com.example.manfredi.platformer.gameobjects.GameObject;
+import com.example.manfredi.platformer.gameobjects.Player;
+
 import java.util.ArrayList;
 
 /**
@@ -13,12 +18,12 @@ import java.util.ArrayList;
 public class LevelManager {
     private static final String TAG = App.getContext().getString(R.string.LevelManagerTag);
     private Bitmap[] mBitmaps;
-    ArrayList<GameObject> mGameObjects;
+    public ArrayList<GameObject> mGameObjects;
     LevelData mData;
-    Player mPlayer;
-    GameView mEngine = null;
+    public Player mPlayer;
+    GameEngine mEngine = null;
 
-    LevelManager(final GameView engine, String levelName) {
+    public LevelManager(final GameEngine engine, String levelName) {
         mEngine = engine;
         switch (levelName) {
             default:
@@ -51,6 +56,7 @@ public class LevelManager {
                 }
             }
         }
+        mGameObjects.add(new DebugTextGameObject(mEngine));
     }
 
     private GameObject createGameObject(final int tileType,final int x,final int y) {

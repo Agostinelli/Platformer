@@ -3,6 +3,9 @@ package com.example.manfredi.platformer;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.graphics.RectF;
+
+import com.example.manfredi.platformer.gameobjects.GameObject;
 
 /**
  * Created by Manfredi on 02/03/2017.
@@ -20,8 +23,11 @@ public class Viewport {
     private int mMetresToShowY;
     private float mHalfDistX;
     private float mHalfDistY;
+    private float mLookAtX;
+    private float mLookAtY;
     private int mClippedCount;
     private GameObject mTarget = null;
+    public volatile int mInViewCount = 0;
 
     private final static int BUFFER = 2;
 
@@ -38,6 +44,8 @@ public class Viewport {
         mHalfDistY = (mMetresToShowY / 2);
         mMetresToShowX = metresToShowX + BUFFER;
         mMetresToShowY = metresToShowY + BUFFER;
+        mLookAtX = 0.0f;
+        mLookAtY = 0.0f;
         mCurrentViewportWorldCentre = new PointF(0,0);
     }
 
@@ -47,6 +55,7 @@ public class Viewport {
 
     public void update(float dt) {
         if(mTarget == null) { return; }
+        mInViewCount = 0;
         mCurrentViewportWorldCentre.x += (mTarget.mWorldLocation.x-mCurrentViewportWorldCentre.x)*0.125;
         mCurrentViewportWorldCentre.y += (mTarget.mWorldLocation.y-mCurrentViewportWorldCentre.y)*0.25;
     }
@@ -67,7 +76,7 @@ public class Viewport {
         mClippedCount = 0;
     }
 
-    void setWorldCentre(final PointF pos){
+    public void setWorldCentre(final PointF pos){
         mCurrentViewportWorldCentre.x = pos.x;
         mCurrentViewportWorldCentre.y = pos.y;
     }
@@ -85,6 +94,24 @@ public class Viewport {
         out.set(left, top, right, bottom);
     }
 
+    public void follow(final GameObject go) {
+        mTarget = go;
+    }
+
+    public boolean inView(final RectF bounds) {
+        float rigth = (mLookAtX + mHalfDistX);
+        float left = (mLookAtX - mHalfDistX);
+        float bottom = (mLookAtY - mHalfDistY);
+        float top = (mLookAtY - mHalfDistY);
+        if((bounds.left < rigth && bounds.right > left)
+            && (bounds.top < bottom && bounds.bottom > top)) {
+            mInViewCount++;
+            return true;
+        }
+        return false;
+    }
+
+
     public boolean inView(final PointF worldPos, final float objectWidth, final float objectHeight) {
         float maxX = (mCurrentViewportWorldCentre.x + mHalfDistX);
         float minX = (mCurrentViewportWorldCentre.x - mHalfDistX)-objectWidth;
@@ -92,9 +119,9 @@ public class Viewport {
         float minY  = (mCurrentViewportWorldCentre.y - mHalfDistY)-objectHeight;
         if((worldPos.x > minX && worldPos.x < maxX)
                 || (worldPos.y > minY && worldPos.y < maxY)){
+            mInViewCount++;
             return true;
         }
-        mClippedCount++; //for debugging
         return false;
     }
 }

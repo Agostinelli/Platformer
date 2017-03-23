@@ -5,6 +5,8 @@ import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.content.ContextCompat;
 
+import com.example.manfredi.platformer.engine.GameEngine;
+
 import java.util.Random;
 
 /**
@@ -13,7 +15,7 @@ import java.util.Random;
 
 public class AnimationManager {
     private static final float SECOND = Float.parseFloat(App.getContext().getString(R.string.SECOND));
-    private GameView mEngine = null;
+    private GameEngine mEngine = null;
     private AnimationDrawable mAnim = null;
     private Bitmap[] mFrames = null;
     private int mFrameCount = 0;
@@ -21,7 +23,7 @@ public class AnimationManager {
     private long mCurrentAnimTime = 0;
     private int mCurrentFrame = 0;
 
-    public AnimationManager(GameView engine, int resourceID, float width, float height) {
+    public AnimationManager(GameEngine engine, int resourceID, float width, float height) {
         mEngine = engine;
         loadAnimationResource(resourceID, width, height);
     }

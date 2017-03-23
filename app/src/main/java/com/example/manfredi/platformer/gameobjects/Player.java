@@ -1,8 +1,14 @@
-package com.example.manfredi.platformer;
+package com.example.manfredi.platformer.gameobjects;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.Log;
+
+import com.example.manfredi.platformer.AnimationManager;
+import com.example.manfredi.platformer.App;
+import com.example.manfredi.platformer.Jukebox;
+import com.example.manfredi.platformer.R;
+import com.example.manfredi.platformer.engine.GameEngine;
 
 /**
  * Created by Manfredi on 05/03/2017.
@@ -53,7 +59,7 @@ public class Player extends DynamicGameObject {
         this.mCoins += 1;
     }
 
-    Player(final GameView engine, final float x, final float y, final int type) {
+    public Player(final GameEngine engine, final float x, final float y, final int type) {
         super(engine, x, y, PLAYER_WIDTH, PLAYER_HEIGHT, type);
         mJukebox = new Jukebox(engine.getContext());
         mCoins = 0;
@@ -67,7 +73,7 @@ public class Player extends DynamicGameObject {
 
     @Override
     public void onCollision(final GameObject that) {
-        if(!GameObject.getOverlap(this, that, overlap)) {
+        if(!getOverlap(this, that, overlap)) {
             Log.d(TAG, mEngine.getContext().getString(R.string.OverlapError));
         }
         if (overlap.y != 0) {
@@ -84,12 +90,12 @@ public class Player extends DynamicGameObject {
     public void render(Canvas canvas, Paint paint) {
         mTransform.reset();
         mTransform.setScale(mFacing, 1.0f);
-        mEngine.setScreenCoordinate(mWorldLocation, GameObject.screenCoord);
+        mEngine.setScreenCoordinate(mWorldLocation, screenCoord);
         int offset = 0;
         if(mFacing == RIGHT) {
             offset = (int) mWidth * mEngine.getPixelsPerMeter();
         }
-        mTransform.postTranslate(GameObject.screenCoord.x+offset, GameObject.screenCoord.y);
+        mTransform.postTranslate(screenCoord.x+offset, screenCoord.y);
 
 
 

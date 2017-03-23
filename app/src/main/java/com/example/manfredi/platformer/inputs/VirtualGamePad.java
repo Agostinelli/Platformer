@@ -1,15 +1,17 @@
-package com.example.manfredi.platformer;
+package com.example.manfredi.platformer.inputs;
 
 import android.view.MotionEvent;
 import android.view.View;
+
+import com.example.manfredi.platformer.R;
 
 /**
  * Created by Manfredi on 17/03/2017.
  */
 
-public class BasicInputManager extends InputManager implements View.OnTouchListener {
+public class VirtualGamePad extends InputManager implements View.OnTouchListener {
 
-    BasicInputManager(View view) {
+    public VirtualGamePad(View view) {
         view.findViewById(R.id.keypad_up).setOnTouchListener(this);
         view.findViewById(R.id.keypad_down).setOnTouchListener(this);
         view.findViewById(R.id.keypad_left).setOnTouchListener(this);

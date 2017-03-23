@@ -1,6 +1,11 @@
-package com.example.manfredi.platformer;
+package com.example.manfredi.platformer.gameobjects;
 
 import android.graphics.PointF;
+
+import com.example.manfredi.platformer.App;
+import com.example.manfredi.platformer.R;
+import com.example.manfredi.platformer.Utils;
+import com.example.manfredi.platformer.engine.GameEngine;
 
 /**
  * Created by Manfredi on 18/03/2017.
@@ -16,11 +21,11 @@ public class DynamicGameObject extends GameObject {
     protected PointF mAcceleration = new PointF(0.0f, 0.0f);
     public float mFriction = Float.parseFloat(App.getContext().getString(R.string.FRICTION));
 
-    DynamicGameObject(final GameView engine, float x, float y, float width, float height, int type) {
+    public DynamicGameObject(final GameEngine engine, float x, float y, float width, float height, int type) {
         super(engine, x, y, width, height, type);
     }
 
-    DynamicGameObject(final GameView engine, float x, float y, int type) {
+    public DynamicGameObject(final GameEngine engine, float x, float y, int type) {
         super(engine, x, y, type);
     }
 

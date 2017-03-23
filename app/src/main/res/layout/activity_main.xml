@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     tools:context="com.example.manfredi.platformer.MainActivity">
 
-    <view class="com.example.manfredi.platformer.GameView"
+    <view class="com.example.manfredi.platformer.engine.GameView"
         android:id="@+id/gameView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"/>

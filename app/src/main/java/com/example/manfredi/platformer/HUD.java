@@ -4,6 +4,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
+import com.example.manfredi.platformer.gameobjects.Player;
+
 /**
  * Created by Manfredi on 20/03/2017.
  */

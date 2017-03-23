@@ -1,4 +1,4 @@
-package com.example.manfredi.platformer;
+package com.example.manfredi.platformer.gameobjects;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -9,6 +9,11 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.RectF;
+
+import com.example.manfredi.platformer.App;
+import com.example.manfredi.platformer.Jukebox;
+import com.example.manfredi.platformer.R;
+import com.example.manfredi.platformer.engine.GameEngine;
 
 /**
  * Created by Manfredi on 05/03/2017.
@@ -26,20 +31,20 @@ public class GameObject {
     public float mHeight = WIDTH;
     public boolean mIsVisible = true;
     public int mType = 0;
-    protected GameView mEngine;
+    protected GameEngine mEngine;
     protected Matrix mTransform = new Matrix();
 
     private Jukebox mJukebox;
 
-    GameObject(final GameView engine, final float x, final float y, final float width, final float height, final int type) {
+    public GameObject(final GameEngine engine, final float x, final float y, final float width, final float height, final int type) {
         init(engine, x, y, width, height, type);
     }
 
-    GameObject(final GameView engine, final float x, final float y, final int type) {
+    public GameObject(final GameEngine engine, final float x, final float y, final int type) {
         init(engine, x, y, WIDTH, HEIGHT, type);
     }
 
-    private void init(final GameView engine, final float x, final float y, final float width, final float height, final int type) {
+    private void init(final GameEngine engine, final float x, final float y, final float width, final float height, final int type) {
         mJukebox = new Jukebox(engine.getContext());
         mEngine = engine;
         mType = type;
@@ -94,7 +99,7 @@ public class GameObject {
             coin = this;
             player.coinPickedUp();
             mJukebox.play(Jukebox.PICKUP);
-            GameView.mLevelManager.mGameObjects.remove(coin);
+            //GameView.mLevelManager.mGameObjects.remove(coin);
             //Log.d("TEST", "COINS: " + player.getCoins());
 
         }

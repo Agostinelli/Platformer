@@ -1,52 +1,65 @@
 package com.example.manfredi.platformer;
 
 import android.content.pm.ActivityInfo;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.example.manfredi.platformer.engine.GameEngine;
+import com.example.manfredi.platformer.engine.GameView;
+import com.example.manfredi.platformer.inputs.VirtualGamePad;
+
 public class MainActivity extends AppCompatActivity {
     GameView mGameView = null;
+    GameEngine mGameEngine = null;
     Jukebox mJukebox = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         hideSystemUI();
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
         setContentView(R.layout.activity_main);
         mJukebox = new Jukebox(getBaseContext());
-        mJukebox.playForever(Jukebox.LEVEL);
+        //mJukebox.playForever(Jukebox.LEVEL);
         mGameView = (GameView) findViewById(R.id.gameView);
-        mGameView.setInputManager(new BasicInputManager(findViewById(R.id.keypad)));
+        mGameEngine = new GameEngine(this, mGameView);
+        mGameEngine.setInputManager(new VirtualGamePad(findViewById(R.id.keypad)));
+        mGameEngine.loadLevel("TestLevel");
     }
 
     @Override
     protected void onPause() {
-        mGameView.pause();
+        mGameEngine.pauseGame();
         super.onPause();
     }
 
     @Override
     protected void onResume() {
-        mGameView.resume();
+        mGameEngine.resumeGame();
         super.onResume();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        mGameEngine.startGame();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        mGameEngine.stopGame();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        super.onStop();
+        mGameEngine.stopGame();
     }
 
     @Override
