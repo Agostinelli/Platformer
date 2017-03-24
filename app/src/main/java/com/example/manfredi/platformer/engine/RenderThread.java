@@ -26,7 +26,7 @@ public class RenderThread extends Thread {
         mIsPaused = false;
     }
 
-    public int getAverageFPS() {
+    public long getAverageFPS() {
         return mTimer.getAverageFPS();
     }
 

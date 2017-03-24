@@ -3,7 +3,6 @@ package com.example.manfredi.platformer.gameobjects;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.Log;
-
 import com.example.manfredi.platformer.AnimationManager;
 import com.example.manfredi.platformer.App;
 import com.example.manfredi.platformer.Jukebox;
@@ -40,8 +39,6 @@ public class Player extends DynamicGameObject {
     private int mHealth;
 
     private Jukebox mJukebox;
-
-
 
     public int getHealth() {
         return mHealth;

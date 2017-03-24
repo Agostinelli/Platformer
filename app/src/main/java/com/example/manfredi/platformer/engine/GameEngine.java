@@ -6,8 +6,10 @@ import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.PointF;
 
+import com.example.manfredi.platformer.App;
 import com.example.manfredi.platformer.HUD;
 import com.example.manfredi.platformer.LevelManager;
+import com.example.manfredi.platformer.R;
 import com.example.manfredi.platformer.Viewport;
 import com.example.manfredi.platformer.gameobjects.GameObject;
 import com.example.manfredi.platformer.inputs.InputManager;
@@ -20,11 +22,16 @@ import java.util.ArrayList;
  */
 
 public class GameEngine {
+    private static final float SCALE_FACTOR = 0.5f;
+    private static final int METERS_TO_SHOW_X = App.getContext().getResources().getInteger(R.integer.METERS_TO_SHOW_X);
+    private static final int METERS_TO_SHOW_Y = App.getContext().getResources().getInteger(R.integer.METERS_TO_SHOW_Y);
     private HUD mHUD = null;
     private Activity mActivity;
     private RenderThread mRenderThread = null;
     private UpdateThread mUpdateThread = null;
     private ArrayList<GameObject> mGameObjects = new ArrayList<>();
+    private ArrayList<GameObject> mObjectsToAdd = new ArrayList<GameObject>();
+    private ArrayList<GameObject> mObjectsToRemove = new ArrayList<GameObject>();
     public GameObject mPlayer = null;
     public InputManager mControl = null;
     private LevelManager mLevelManager = null;
@@ -36,7 +43,7 @@ public class GameEngine {
         mActivity = activity;
         mControl = new NullInput();
         mGameView = gameView;
-        mCamera = mGameView.createViewport();
+        mCamera = mGameView.createViewport(METERS_TO_SHOW_X, METERS_TO_SHOW_Y, SCALE_FACTOR);
     }
 
 
@@ -50,6 +57,20 @@ public class GameEngine {
             //}
         }
         doCollisionChecks();
+
+        synchronized (mGameObjects) {
+            GameObject temp;
+            while(!mObjectsToRemove.isEmpty()) {
+                temp = mObjectsToRemove.remove(0);
+                mGameObjects.remove(temp);
+            }
+            while (!mObjectsToAdd.isEmpty()) {
+                temp = mObjectsToAdd.remove(0);
+                addGameObjectNow(temp);
+            }
+        }
+
+
     }
 
     private void doCollisionChecks() {
@@ -65,6 +86,23 @@ public class GameEngine {
                 }
             }
         }
+    }
+
+    public void addGameObject(final GameObject gameObject) {
+        if(isRunning()) {
+            mObjectsToAdd.add(gameObject);
+        }
+        else {
+            addGameObjectNow(gameObject);
+        }
+    }
+
+    public void addGameObjectNow(final GameObject gameObject) {
+        mObjectsToRemove.add(gameObject);
+    }
+
+    public void removeGameObject(final GameObject gameObject) {
+        mObjectsToRemove.add(gameObject);
     }
 
     public void render() {
@@ -94,14 +132,23 @@ public class GameEngine {
         };
     }
 
-    public void loadLevel(String levelName) {
+    public boolean isRunning() {
+        return mUpdateThread != null && mUpdateThread.isGamePaused();
+    }
+
+    public boolean isPaused() {
+        return mUpdateThread != null && mUpdateThread.isGamePaused();
+    }
+
+    /*public void loadLevel(String levelName) {
         mLevelManager = new LevelManager(this, levelName);
         mGameObjects = mLevelManager.mGameObjects;
         mGameView.setGameObjects(mGameObjects);
         mPlayer = mLevelManager.mPlayer;
-        mCamera.setWorldCentre(mPlayer.mWorldLocation);
-        mCamera.setTarget(mPlayer);
-    }
+        mCamera.lookAt(mPlayer.x(), mPlayer.y());
+        //mCamera.setWorldCentre(mPlayer.mWorldLocation);
+        mCamera.follow(mPlayer);
+    }*/
 
     public void startGame() {
         stopGame();
@@ -113,6 +160,7 @@ public class GameEngine {
 
         mRenderThread = new RenderThread(this);
         mRenderThread.start();
+        stopGame();
     }
 
     public void stopGame() {

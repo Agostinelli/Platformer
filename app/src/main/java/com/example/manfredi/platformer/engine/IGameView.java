@@ -11,6 +11,6 @@ import java.util.ArrayList;
 
 public interface IGameView {
     public void setGameObjects(ArrayList<GameObject> gameObjects);
-    public Viewport createViewport();
+    public Viewport createViewport(float metersToShowX, float meterstoShowY, float scaleFactor);
     public void render();
 }

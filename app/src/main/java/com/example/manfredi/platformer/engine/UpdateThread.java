@@ -20,7 +20,7 @@ public class UpdateThread extends Thread {
     }
 
 
-    public int getAverageFPS() {
+    public long getAverageFPS() {
         return mTimer.getAverageFPS();
     }
 

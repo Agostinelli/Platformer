@@ -25,24 +25,22 @@ public class GameView extends SurfaceView implements IGameView {
     private static final String TAG = App.getContext().getString(R.string.gameViewTag);
     private ArrayList<GameObject> mGameObjects = new ArrayList<>();
     private static final int BG_COLOR = Color.rgb(135, 206, 235);//sky blue
+    private static final int AVD_TRUE_SCREEN_WIDTH = 1920;
+    private static final int coinType = App.getContext().getResources().getInteger(R.integer.coinType);
+
+    private static final int STAGE_WIDTH = 1920/3;
+    private static final int STAGE_HEIGHT = 1080/3;
+    private static final boolean SCALE_CONTENT = true;
 
     private Canvas mCanvas = null;
     private SurfaceHolder mSurfaceHolder = null;
     Context mContext = null;
     private Paint mPaint = null;
     private Viewport mCamera = null;
-
-
     ArrayList<GameObject> mCoins = null;
-    HUD mHUD = null;
-    private Jukebox mJukebox;
+    private HUD mHUD = null;
+    private Jukebox mJukebox = null;
 
-    private static final int coinType = App.getContext().getResources().getInteger(R.integer.coinType);
-    private static final int METERS_TO_SHOW_X = App.getContext().getResources().getInteger(R.integer.METERS_TO_SHOW_X);
-    private static final int METERS_TO_SHOW_Y = App.getContext().getResources().getInteger(R.integer.METERS_TO_SHOW_Y);
-    private static final int STAGE_WIDTH = 1920/3;
-    private static final int STAGE_HEIGHT = 1080/3;
-    private static final boolean SCALE_CONTENT = true;
 
     public GameView(Context context) {
         super(context);
@@ -66,23 +64,22 @@ public class GameView extends SurfaceView implements IGameView {
         mJukebox = new Jukebox(context);
         mCoins = new ArrayList<GameObject>();
         mContext = context;
-
         mPaint = new Paint();
         mSurfaceHolder = getHolder();
-        createViewport();
     }
 
 
 
-    public Viewport createViewport() {
+    public Viewport createViewport(float metersToShowX, float meterstoShowY, float scaleFactor) {
         int screenWidth = getResources().getDisplayMetrics().widthPixels;
         int screenHeight = getResources().getDisplayMetrics().heightPixels;
-        if (SCALE_CONTENT) {
+        if (scaleFactor != 1.0f) {
+            screenWidth = (int) (screenWidth * scaleFactor);
+            screenHeight = (int) (screenHeight * scaleFactor);
             mSurfaceHolder.setFixedSize(STAGE_WIDTH, STAGE_HEIGHT);
-            screenWidth = STAGE_WIDTH;
-            screenHeight = STAGE_HEIGHT;
+
         }
-        mCamera = new Viewport(screenWidth, screenHeight, METERS_TO_SHOW_X, METERS_TO_SHOW_Y);
+        mCamera = new Viewport(screenWidth, screenHeight, metersToShowX, meterstoShowY);
         return mCamera;
     }
 

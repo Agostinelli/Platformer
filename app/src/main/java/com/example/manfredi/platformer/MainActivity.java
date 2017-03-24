@@ -6,16 +6,26 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.InputDevice;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.manfredi.platformer.engine.GameEngine;
-import com.example.manfredi.platformer.engine.GameView;
-import com.example.manfredi.platformer.inputs.VirtualGamePad;
+import com.example.manfredi.platformer.engine.IGameView;
+import com.example.manfredi.platformer.inputs.Accelerometer;
+import com.example.manfredi.platformer.inputs.CompositeControl;
+import com.example.manfredi.platformer.inputs.Gamepad;
+import com.example.manfredi.platformer.inputs.GamepadListener;
+import com.example.manfredi.platformer.inputs.VirtualJoystick;
 
-public class MainActivity extends AppCompatActivity {
-    GameView mGameView = null;
+public class MainActivity extends AppCompatActivity implements android.hardware.input.InputManager.InputDeviceListener {
+    IGameView mGameView = null;
     GameEngine mGameEngine = null;
     Jukebox mJukebox = null;
+    GamepadListener mGamepadListener = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,12 +33,41 @@ public class MainActivity extends AppCompatActivity {
         hideSystemUI();
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         setContentView(R.layout.activity_main);
-        mJukebox = new Jukebox(getBaseContext());
+        //mJukebox = new Jukebox(getBaseContext());
         //mJukebox.playForever(Jukebox.LEVEL);
-        mGameView = (GameView) findViewById(R.id.gameView);
+        mGameView = (IGameView) findViewById(R.id.gameView);
         mGameEngine = new GameEngine(this, mGameView);
-        mGameEngine.setInputManager(new VirtualGamePad(findViewById(R.id.keypad)));
-        mGameEngine.loadLevel("TestLevel");
+        CompositeControl control = new CompositeControl(
+                new VirtualJoystick(findViewById(R.id.virtual_joystick)),
+                new Gamepad(this),
+                new Accelerometer(this)
+        );
+        mGameEngine.setInputManager(control);
+        //mGameEngine.loadLevel("TestLevel");
+    }
+
+    public void setmGamepadListener(GamepadListener listener) {
+        mGamepadListener = listener;
+    }
+
+    @Override
+    public boolean dispatchGenericMotionEvent(final MotionEvent ev) {
+        if(mGamepadListener != null) {
+            if(mGamepadListener.dispatchGenericMotionEvent(ev)) {
+                return true;
+            }
+        }
+        return super.dispatchGenericMotionEvent(ev);
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(final KeyEvent ev) {
+        if(mGamepadListener != null) {
+            if (mGamepadListener.dispatchKeyEvent(ev)) {
+                return true;
+            }
+        }
+        return super.dispatchKeyEvent(ev);
     }
 
     @Override
@@ -39,8 +78,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        mGameEngine.resumeGame();
         super.onResume();
+        if(isGameControllerConnected()) {
+            Toast.makeText(this, "Gamepad Detected", Toast.LENGTH_LONG).show();
+        }
+        mGameEngine.resumeGame();
     }
 
     @Override
@@ -94,6 +136,34 @@ public class MainActivity extends AppCompatActivity {
                     View.SYSTEM_UI_FLAG_LOW_PROFILE
             );
         }
+    }
+
+    public boolean isGameControllerConnected() {
+        int[] deviceIds = InputDevice.getDeviceIds();
+        for (int deviceId : deviceIds) {
+            InputDevice dev = InputDevice.getDevice(deviceId);
+            int sources = dev.getSources();
+            if(((sources & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD) ||
+            ((sources & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void onInputDeviceAdded(final int deviceId) {
+        Toast.makeText(this, "Input Device Added", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onInputDeviceRemoved(final int deviceId) {
+        Toast.makeText(this, "Input Device Removed!", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onInputDeviceChanged(final int deviceId) {
+        Toast.makeText(this, "Input device changed", Toast.LENGTH_LONG).show();
     }
 }
 

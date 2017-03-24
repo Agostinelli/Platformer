@@ -5,14 +5,17 @@ package com.example.manfredi.platformer;
  */
 
 public class FrameTimer {
-    private static final long SECOND = App.getContext().getResources().getInteger(R.integer.second);
-    private static final float TO_SECONDS = Float.parseFloat(App.getContext().getString(R.string.SECOND));
+    public static long SECOND_IN_NANOSECONDS = 1000000000;
+    public static long MILLISECOND_IN_NANOSECONDS = 1000000;
+    public static float NANOSECONDS_TO_MILLISENCONDS = 1.0f / MILLISECOND_IN_NANOSECONDS;
+    public static float NANOSECONDS_TO_SECONDS = 1.0f / SECOND_IN_NANOSECONDS;
+
+    private static final long SAMPLE_INTERVAL = (long) (SECOND_IN_NANOSECONDS/2);
     private long mStartFrameTime = 0;
     private long mElapsedTime = 0;
     private int mFrameCount = 0;
-    private long mMillisCount = 0;
+    private long mNanosCount = 0;
     private float mAvgFPS = 0;
-
 
     public FrameTimer() {
         reset();
@@ -22,29 +25,37 @@ public class FrameTimer {
         mStartFrameTime = 0;
         mElapsedTime = 0;
         mFrameCount = 0;
-        mMillisCount = 0;
+        mNanosCount = 0;
     }
 
     public float tick() {
         mFrameCount++;
-        mElapsedTime = System.currentTimeMillis()-mStartFrameTime;
-        mMillisCount += mElapsedTime;
-        mStartFrameTime = System.currentTimeMillis();
-        return mElapsedTime / TO_SECONDS;
+        mElapsedTime = System.nanoTime()-mStartFrameTime;
+        mNanosCount += mElapsedTime;
+        mStartFrameTime = System.nanoTime();
+        return mElapsedTime * NANOSECONDS_TO_SECONDS;
     }
 
-    public int getAverageFPS() {
-        if(mMillisCount > SECOND) {
-            mAvgFPS = mFrameCount*SECOND / mMillisCount;
+    public long getmElapsedNanos() {return mElapsedTime; }
+    public long getmElapsedMillis() {
+        return (long) (mElapsedTime * NANOSECONDS_TO_MILLISENCONDS);
+    }
+    public float getElapsedSeconds() {
+        return mElapsedTime * NANOSECONDS_TO_SECONDS;
+    }
+
+    public long getAverageFPS() {
+        if(mNanosCount > SAMPLE_INTERVAL) {
+            mAvgFPS = mFrameCount*SECOND_IN_NANOSECONDS / mNanosCount;
             mFrameCount = 0;
-            mMillisCount = 0;
+            mNanosCount = 0;
         }
-        return (int) mAvgFPS;
+        return (long) mAvgFPS;
     }
 
     public long getCurrentFPS() {
-        if(mElapsedTime > 0) {
-            return SECOND / mElapsedTime;
+        if (mElapsedTime > 0) {
+            return (long) SECOND_IN_NANOSECONDS / mElapsedTime;
         }
         return 0;
     }
