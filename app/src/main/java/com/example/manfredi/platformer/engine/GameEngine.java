@@ -7,6 +7,7 @@ import android.graphics.Point;
 import android.graphics.PointF;
 
 import com.example.manfredi.platformer.App;
+import com.example.manfredi.platformer.GL.GLGameObject;
 import com.example.manfredi.platformer.HUD;
 import com.example.manfredi.platformer.LevelManager;
 import com.example.manfredi.platformer.R;
@@ -29,9 +30,9 @@ public class GameEngine {
     private Activity mActivity;
     private RenderThread mRenderThread = null;
     private UpdateThread mUpdateThread = null;
-    private ArrayList<GameObject> mGameObjects = new ArrayList<>();
-    private ArrayList<GameObject> mObjectsToAdd = new ArrayList<GameObject>();
-    private ArrayList<GameObject> mObjectsToRemove = new ArrayList<GameObject>();
+    private ArrayList<GLGameObject> mGameObjects = new ArrayList<>();
+    private ArrayList<GLGameObject> mObjectsToAdd = new ArrayList<GameObject>();
+    private ArrayList<GLGameObject> mObjectsToRemove = new ArrayList<GameObject>();
     public GameObject mPlayer = null;
     public InputManager mControl = null;
     private LevelManager mLevelManager = null;

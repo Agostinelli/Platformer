@@ -5,12 +5,13 @@ package com.example.manfredi.platformer;
  */
 
 public class FrameTimer {
+    private static final String TAG = "FrameTimer";
     public static long SECOND_IN_NANOSECONDS = 1000000000;
     public static long MILLISECOND_IN_NANOSECONDS = 1000000;
     public static float NANOSECONDS_TO_MILLISENCONDS = 1.0f / MILLISECOND_IN_NANOSECONDS;
     public static float NANOSECONDS_TO_SECONDS = 1.0f / SECOND_IN_NANOSECONDS;
 
-    private static final long SAMPLE_INTERVAL = (long) (SECOND_IN_NANOSECONDS/2);
+    private static final long SAMPLE_INTERVAL = (long) (SECOND_IN_NANOSECONDS);
     private long mStartFrameTime = 0;
     private long mElapsedTime = 0;
     private int mFrameCount = 0;
