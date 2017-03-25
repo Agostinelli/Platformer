@@ -1,7 +1,6 @@
 package com.example.manfredi.platformer.engine;
 
-import com.example.manfredi.platformer.Viewport;
-import com.example.manfredi.platformer.gameobjects.GameObject;
+import com.example.manfredi.platformer.GL.GLGameObject;
 
 import java.util.ArrayList;
 
@@ -10,7 +9,6 @@ import java.util.ArrayList;
  */
 
 public interface IGameView {
-    public void setGameObjects(ArrayList<GameObject> gameObjects);
-    public Viewport createViewport(float metersToShowX, float meterstoShowY, float scaleFactor);
-    public void render();
+    void setGameObjects(ArrayList<GLGameObject> gameObjects);
+    void follow(final GLGameObject go);
 }

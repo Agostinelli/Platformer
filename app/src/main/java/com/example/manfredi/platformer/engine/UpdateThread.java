@@ -7,23 +7,19 @@ import com.example.manfredi.platformer.FrameTimer;
  */
 
 public class UpdateThread extends Thread {
-
     private final GameEngine mEngine;
     private boolean mIsRunning = true;
     private boolean mIsPaused = false;
     private Object mLock = new Object();
     private FrameTimer mTimer = new FrameTimer();
 
-
     public UpdateThread(GameEngine engine) {
         mEngine = engine;
     }
 
-
     public long getAverageFPS() {
         return mTimer.getAverageFPS();
     }
-
 
     @Override
     public synchronized void start() {

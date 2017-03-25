@@ -11,6 +11,13 @@
     <integer name="height">1</integer>
     <integer name="width">1</integer>
     <integer name="coinType">3</integer>
-    <integer name="METERS_TO_SHOW_X">16</integer>
-    <integer name="METERS_TO_SHOW_Y">9</integer>
+    <integer name="METERS_TO_SHOW_X">0</integer>
+    <integer name="METERS_TO_SHOW_Y">180</integer>
+    <integer name="STAR_COUNT">200</integer>
+    <integer name="BG_COLOR_R">135</integer>
+    <integer name="BG_COLOR_G">206</integer>
+    <integer name="BG_COLOR_B">235</integer>
+    <integer name="line_width">10</integer>
+    <integer name="size_of_float">4</integer>
+    <integer name="coords_per_vertex">3</integer>
 </resources>

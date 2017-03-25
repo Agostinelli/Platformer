@@ -23,7 +23,6 @@ import com.example.manfredi.platformer.inputs.VirtualJoystick;
 public class MainActivity extends AppCompatActivity implements android.hardware.input.InputManager.InputDeviceListener {
     IGameView mGameView = null;
     GameEngine mGameEngine = null;
-    Jukebox mJukebox = null;
     GamepadListener mGamepadListener = null;
 
     @Override
@@ -33,8 +32,6 @@ public class MainActivity extends AppCompatActivity implements android.hardware.
         hideSystemUI();
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         setContentView(R.layout.activity_main);
-        //mJukebox = new Jukebox(getBaseContext());
-        //mJukebox.playForever(Jukebox.LEVEL);
         mGameView = (IGameView) findViewById(R.id.gameView);
         mGameEngine = new GameEngine(this, mGameView);
         CompositeControl control = new CompositeControl(
@@ -43,7 +40,6 @@ public class MainActivity extends AppCompatActivity implements android.hardware.
                 new Accelerometer(this)
         );
         mGameEngine.setInputManager(control);
-        //mGameEngine.loadLevel("TestLevel");
     }
 
     public void setmGamepadListener(GamepadListener listener) {
@@ -80,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements android.hardware.
     protected void onResume() {
         super.onResume();
         if(isGameControllerConnected()) {
-            Toast.makeText(this, "Gamepad Detected", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.gamepadDet, Toast.LENGTH_LONG).show();
         }
         mGameEngine.resumeGame();
     }
@@ -153,17 +149,17 @@ public class MainActivity extends AppCompatActivity implements android.hardware.
 
     @Override
     public void onInputDeviceAdded(final int deviceId) {
-        Toast.makeText(this, "Input Device Added", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, R.string.inpuDeAdd, Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onInputDeviceRemoved(final int deviceId) {
-        Toast.makeText(this, "Input Device Removed!", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, R.string.inDR, Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onInputDeviceChanged(final int deviceId) {
-        Toast.makeText(this, "Input device changed", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, R.string.inDeCh, Toast.LENGTH_LONG).show();
     }
 }
 

@@ -1,12 +1,26 @@
 package com.example.manfredi.platformer.GL;
 
+import com.example.manfredi.platformer.App;
+import com.example.manfredi.platformer.R;
+import com.example.manfredi.platformer.Utils;
+import com.example.manfredi.platformer.engine.GameEngine;
+
 /**
  * Created by Manfredi on 25/03/2017.
  */
 
 public class GLSpaceship extends GLGameObject {
+    private static final float TO_RADIANS = ((float)Math.PI/180);
+    private GameEngine mEngine = null;
+    private float mMaxRotationSpeed = Float.parseFloat(App.getContext().getString(R.string.max_rotation));
+    private float mThrust = Float.parseFloat(App.getContext().getString(R.string.thrust));
+    private float mVelX = 0f;
+    private float mVelY = 0f;
+    private float mMaxVelocity = Float.parseFloat(App.getContext().getString(R.string.maxVel));
+    private float mFriction = Float.parseFloat(App.getContext().getString(R.string.friction));
 
-    public GLSpaceship(float x, float y) {
+    public GLSpaceship(GameEngine engine, float x, float y) {
+        mEngine = engine;
         mPos.x = x;
         mPos.y = y;
         float width = 15;
@@ -23,11 +37,20 @@ public class GLSpaceship extends GLGameObject {
 
     @Override
     public void update(float dt) {
-        mRotation = sineWave(180, 180, mVR);
-        float radiusx = GLGameView.mWorldWidth/2;
-        float radiusy = GLGameView.mWorldHeight/2;
-        mPos.x = sineWave(GLGameView.mWorldWidth/2, radiusx, mVR);
-        mPos.y = cosWave(GLGameView.mWorldHeight/2,radiusy,mVR);
-        mVR += 0.02f;
+        mRotation += mEngine.mControl.mHorizontalFactor * (mMaxRotationSpeed * dt);
+        float accel = mEngine.mControl.mVerticalFactor * mThrust;
+        float angle = (mRotation-90) * TO_RADIANS;
+        float ax = (float) Math.cos(angle) * accel;
+        float ay = (float) Math.sin(angle) * accel;
+        mVelX += ax*dt;
+        mVelY += ay*dt;
+        mVelX = Utils.clamp(mVelX, -mMaxVelocity, mMaxVelocity);
+        mVelY = Utils.clamp(mVelY, -mMaxVelocity, mMaxVelocity);
+        mPos.x += mVelX;
+        mPos.y = mVelY;
+        mVelX *= mFriction;
+        mVelY *= mFriction;
+
     }
+
 }

@@ -3,6 +3,9 @@ package com.example.manfredi.platformer.GL;
 import android.opengl.GLES20;
 import android.util.Log;
 
+import com.example.manfredi.platformer.App;
+import com.example.manfredi.platformer.R;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -12,9 +15,9 @@ import java.nio.FloatBuffer;
  */
 
 public class GLModel {
-    private static final String TAG = "GLModel";
-    public static final int SIZE_OF_FLOAT = 4;
-    public static final int COORDS_PER_VERTEX = 3;
+    private static final String TAG = App.getContext().getString(R.string.GLModelTag);
+    public static final int SIZE_OF_FLOAT = App.getContext().getResources().getInteger(R.integer.size_of_float);
+    public static final int COORDS_PER_VERTEX = App.getContext().getResources().getInteger(R.integer.coords_per_vertex);
     public int mVertexCount = 0;
     public final static int STRIDE = COORDS_PER_VERTEX * SIZE_OF_FLOAT;
     public FloatBuffer mVertexBuffer = null;
@@ -42,7 +45,7 @@ public class GLModel {
 
     private void setPrimitive(int primitiveType) {
         if(primitiveType != GLES20.GL_TRIANGLES && primitiveType != GLES20.GL_LINES && primitiveType != GLES20.GL_POINTS) {
-            Log.d(TAG, "uknown primitive type " + primitiveType);
+            Log.d(TAG, App.getContext().getString(R.string.uknowErr) + primitiveType);
             primitiveType = GLES20.GL_TRIANGLES;
         }
         mDrawMode = primitiveType;

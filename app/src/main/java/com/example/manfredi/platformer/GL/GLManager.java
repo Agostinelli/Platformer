@@ -3,6 +3,9 @@ package com.example.manfredi.platformer.GL;
 import android.opengl.GLES20;
 import android.util.Log;
 
+import com.example.manfredi.platformer.App;
+import com.example.manfredi.platformer.R;
+
 import java.nio.FloatBuffer;
 
 import static com.example.manfredi.platformer.GL.GLModel.COORDS_PER_VERTEX;
@@ -12,7 +15,7 @@ import static com.example.manfredi.platformer.GL.GLModel.COORDS_PER_VERTEX;
  */
 
 public class GLManager {
-    private static final String TAG = "GLManager";
+    private static final String TAG = App.getContext().getString(R.string.GLManagerTag);
     public static int mProgram;
     public static int uColor;
     public static int aPosition;
@@ -52,17 +55,17 @@ public class GLManager {
         GLES20.glVertexAttribPointer(GLManager.aPosition, COORDS_PER_VERTEX,
                 GLES20.GL_FLOAT, false,
                 GLModel.STRIDE, vertexBuffer);
-        checkGLError("uploadMesh");
+        checkGLError(App.getContext().getString(R.string.uploadMeshErr));
     }
 
     public static void setShaderColor(final float[] color) {
         GLES20.glUniform4fv(GLManager.uColor, 1, color, 0);
-        checkGLError("setShaderColor");
+        checkGLError(App.getContext().getString(R.string.setshaderErr));
     }
 
     public static void setModelViewMatrix(final float[] modelViewMatrix) {
         GLES20.glUniformMatrix4fv(GLManager.uMVP, 1, false, modelViewMatrix, 0);
-        checkGLError("setModelViewMatrix");
+        checkGLError(App.getContext().getString(R.string.setModErr));
     }
 
 
@@ -70,18 +73,18 @@ public class GLManager {
         if(drawMode != GLES20.GL_TRIANGLES
                 && drawMode != GLES20.GL_LINES
                 && drawMode != GLES20.GL_POINTS)  {
-            Log.d(TAG, "Drawmesh: unkonwn primitive type! " + drawMode);
+            Log.d(TAG, App.getContext().getString(R.string.uknownErr) + drawMode);
             return;
         }
         GLES20.glDrawArrays(drawMode, 0, vertexCount);
         GLES20.glDisableVertexAttribArray(GLManager.aPosition);
-        checkGLError("drawMesh");
+        checkGLError(App.getContext().getString(R.string.drawMeshErr));
     }
 
     public static void checkGLError(final String func) {
         int error;
         while((error=GLES20.glGetError()) != GLES20.GL_NO_ERROR) {
-            Log.e(func, "glError" + error);
+            Log.e(func, App.getContext().getString(R.string.glErr) + error);
         }
     }
 

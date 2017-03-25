@@ -4,13 +4,17 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.opengl.Matrix;
 
+import com.example.manfredi.platformer.App;
+import com.example.manfredi.platformer.R;
+import com.example.manfredi.platformer.Utils;
+
 /**
  * Created by Manfredi on 25/03/2017.
  */
 
-public class GLViewport {
-    private static final float EASE_X = 0.125f;
-    private static final float EASE_Y = 0.25f;
+public class GLViewport extends GLGameObject {
+    private static final float EASE_X = Float.parseFloat(App.getContext().getString(R.string.ease_x));
+    private static final float EASE_Y = Float.parseFloat(App.getContext().getString(R.string.ease_y));
     private PointF mCurrentViewportWorldCentre;
     float[] mViewMatrix = new float[4*4];
     private int mScreenWidth;
@@ -21,31 +25,34 @@ public class GLViewport {
     private float mHalfDistY;
     private float mLookAtX;
     private float mLookAtY;
-    private PointF mLookAt = new PointF(0f,0f);
     private int mClippedCount;
     private GLGameObject mTarget = null;
+    private PointF mMinPos = new PointF(0f,0f);
+    private PointF mMaxPos = new PointF(Float.MAX_VALUE, Float.MAX_VALUE);
 
     public GLViewport(final int screenWidth, final int screenHeight, final float metresToShowX, final float metresToShowY){
+        setViewport(screenWidth, screenHeight, metresToShowX, metresToShowY);
+    }
+
+    public void setViewport(final int screenWidth, final int screenHeight, final float metresToShowX, final float metresToShowY){
         mScreenWidth = screenWidth;
         mScreenHeight = screenHeight;
-        //mScreenCentreX = mScreenWidth / 2;
-        //mScreenCentreY = mScreenHeight / 2;
-        //mPixelsPerMetreX = mScreenWidth / metresToShowX;
-        //mPixelsPerMetreY = mScreenHeight / metresToShowY;
-        //mMetersToShowX = metresToShowX;
-        //mMetersToShowY = metresToShowY;
-        //mHalfDistX = (mMetersToShowX / 2);
-        //mHalfDistY = (mMetersToShowY / 2);
-        //mMetersToShowX = metresToShowX + BUFFER;
-        //mMetersToShowY = metresToShowY + BUFFER;
-        mLookAtX = 0.0f;
-        mLookAtY = 0.0f;
-        //mCurrentViewportWorldCentre = new PointF(0,0);
+        mPos.x = 0.0f;
+        mPos.y = 0.0f;
         setmetersToShow(metresToShowX, metresToShowY);
     }
 
+    public void setBounds(float minX, float minY, float worldWidth, float worldHeight) {
+        mMinPos.x = minX+mHalfDistX;
+        mMinPos.y = worldHeight-mHalfDistY;
+        mMaxPos.x = worldWidth-mHalfDistX;
+        mMaxPos.y = minY+mHalfDistY;
+        mPos.x = Utils.clamp(mPos.x, mMinPos.x, mMaxPos.x);
+        mPos.y = Utils.clamp(mPos.y, mMaxPos.y, mMinPos.y);
+    }
+
     private void setmetersToShow(final float metersToShowX, final float metersToShowY) {
-        if(metersToShowX < 1 && metersToShowY < 1) throw new IllegalArgumentException("One of the dimension must be");
+        if(metersToShowX < 1 && metersToShowY < 1) throw new IllegalArgumentException(App.getContext().getString(R.string.illerr));
         mMetersToShowX = metersToShowX;
         mMetersToShowY = metersToShowY;
         if (metersToShowX > 0 && metersToShowY > 0) {
@@ -69,30 +76,39 @@ public class GLViewport {
         return mViewMatrix;
     }
 
+    @Override
+    public void draw(final float[] viewMatrix) {
+
+    }
+
+    @Override
     public void update(final float dt) {
         if(mTarget != null) {
-            synchronized (mLookAt) {
-                mLookAt.x += (mTarget.mPos.x - mLookAt.x); //* EASE_X;
-                mLookAt.y += (mTarget.mPos.y - mLookAt.y); //* EASE_Y;
-            }
+            mPos.x += (mTarget.mPos.x - mPos.x) * EASE_X;
+            mPos.y += (mTarget.mPos.y - mPos.y) * EASE_Y;
+
         }
+        mPos.x = Utils.clamp(mPos.x, mMaxPos.x, mMaxPos.x);
+        mPos.y = Utils.clamp(mPos.y, mMaxPos.y, mMinPos.y);
         final float NEAR = 0f;
         final float FAR = 1f;
-        final float LEFT = mLookAt.x - mHalfDistX;
-        final float RIGHT = mLookAt.x + mHalfDistX;
-        final float TOP = mLookAt.y + mHalfDistY;
+        final float LEFT = mPos.x - mHalfDistX;
+        final float RIGHT = mPos.x + mHalfDistX;
+        final float TOP = mPos.y + mHalfDistY;
         final float BOTTOM = mLookAtY - mHalfDistY;
-        Matrix.orthoM(mViewMatrix, 0, LEFT, RIGHT, BOTTOM, TOP, NEAR, FAR);
+        synchronized (mViewMatrix) {
+            Matrix.orthoM(mViewMatrix, 0, LEFT, RIGHT, BOTTOM, TOP, NEAR, FAR);
+        }
     }
 
     public void lookAt(final PointF pos) {
-        mLookAtX = pos.x;
-        mLookAtY = pos.y;
+        mPos.x = pos.x;
+        mPos.y = pos.y;
     }
 
     public void lookAt(final float x, final float y) {
-        mLookAtX = x;
-        mLookAtY = y;
+        mPos.x = x;
+        mPos.y = y;
     }
 
     public int getScreenWidth() {

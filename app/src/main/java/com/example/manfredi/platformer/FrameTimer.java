@@ -5,7 +5,7 @@ package com.example.manfredi.platformer;
  */
 
 public class FrameTimer {
-    private static final String TAG = "FrameTimer";
+    private static final String TAG = App.getContext().getString(R.string.FrameTimerTag);
     public static long SECOND_IN_NANOSECONDS = 1000000000;
     public static long MILLISECOND_IN_NANOSECONDS = 1000000;
     public static float NANOSECONDS_TO_MILLISENCONDS = 1.0f / MILLISECOND_IN_NANOSECONDS;
