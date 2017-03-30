@@ -1,7 +1,6 @@
 package com.example.manfredi.platformer.GL;
 
 import android.graphics.PointF;
-import android.graphics.RectF;
 import android.opengl.Matrix;
 
 import com.example.manfredi.platformer.App;
@@ -23,8 +22,6 @@ public class GLViewport extends GLGameObject {
     private float mMetersToShowY;
     private float mHalfDistX;
     private float mHalfDistY;
-    private float mLookAtX;
-    private float mLookAtY;
     private int mClippedCount;
     private GLGameObject mTarget = null;
     private PointF mMinPos = new PointF(0f,0f);
@@ -37,8 +34,8 @@ public class GLViewport extends GLGameObject {
     public void setViewport(final int screenWidth, final int screenHeight, final float metresToShowX, final float metresToShowY){
         mScreenWidth = screenWidth;
         mScreenHeight = screenHeight;
-        mPos.x = 0.0f;
-        mPos.y = 0.0f;
+        mPos.x = 0.0f; //mLookat.x
+        mPos.y = 0.0f; //mLookAt.y
         setmetersToShow(metresToShowX, metresToShowY);
     }
 
@@ -47,18 +44,19 @@ public class GLViewport extends GLGameObject {
         mMinPos.y = worldHeight-mHalfDistY;
         mMaxPos.x = worldWidth-mHalfDistX;
         mMaxPos.y = minY+mHalfDistY;
-        mPos.x = Utils.clamp(mPos.x, mMinPos.x, mMaxPos.x);
-        mPos.y = Utils.clamp(mPos.y, mMaxPos.y, mMinPos.y);
+        mPos.x = Utils.clamp(mPos.x, mMinPos.x, mMaxPos.x); //mPos.x
+        mPos.y = Utils.clamp(mPos.y, mMaxPos.y, mMinPos.y); // mPos.y
     }
 
     private void setmetersToShow(final float metersToShowX, final float metersToShowY) {
         if(metersToShowX < 1 && metersToShowY < 1) throw new IllegalArgumentException(App.getContext().getString(R.string.illerr));
         mMetersToShowX = metersToShowX;
         mMetersToShowY = metersToShowY;
+
         if (metersToShowX > 0 && metersToShowY > 0) {
 
         }
-        else if (metersToShowX > 0) {
+        else if (metersToShowY > 0) {
             mMetersToShowX = ((float) mScreenWidth / mScreenHeight) * metersToShowY;
         }
         else {
@@ -77,25 +75,22 @@ public class GLViewport extends GLGameObject {
     }
 
     @Override
-    public void draw(final float[] viewMatrix) {
-
-    }
+    public void draw(final float[] viewMatrix) {}
 
     @Override
     public void update(final float dt) {
         if(mTarget != null) {
             mPos.x += (mTarget.mPos.x - mPos.x) * EASE_X;
             mPos.y += (mTarget.mPos.y - mPos.y) * EASE_Y;
-
         }
-        mPos.x = Utils.clamp(mPos.x, mMaxPos.x, mMaxPos.x);
+        mPos.x = Utils.clamp(mPos.x, mMinPos.x, mMaxPos.x);
         mPos.y = Utils.clamp(mPos.y, mMaxPos.y, mMinPos.y);
         final float NEAR = 0f;
         final float FAR = 1f;
         final float LEFT = mPos.x - mHalfDistX;
         final float RIGHT = mPos.x + mHalfDistX;
         final float TOP = mPos.y + mHalfDistY;
-        final float BOTTOM = mLookAtY - mHalfDistY;
+        final float BOTTOM = mPos.y - mHalfDistY;
         synchronized (mViewMatrix) {
             Matrix.orthoM(mViewMatrix, 0, LEFT, RIGHT, BOTTOM, TOP, NEAR, FAR);
         }
@@ -134,19 +129,6 @@ public class GLViewport extends GLGameObject {
         mCurrentViewportWorldCentre.y = pos.y;
     }
 
-
-
-    public boolean inView(final RectF bounds) {
-        float rigth = (mLookAtX + mHalfDistX);
-        float left = (mLookAtX - mHalfDistX);
-        float bottom = (mLookAtY - mHalfDistY);
-        float top = (mLookAtY - mHalfDistY);
-        if((bounds.left < rigth && bounds.right > left)
-                && (bounds.top < bottom && bounds.bottom > top)) {
-            return true;
-        }
-        return false;
-    }
 
 
     public boolean inView(final PointF worldPos, final float objectWidth, final float objectHeight) {

@@ -84,7 +84,8 @@ public class GLGameView extends GLSurfaceView implements IGameView, GLSurfaceVie
     @Override
     public void onDrawFrame(final GL10 unused) {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-        mTimer.tick();
+        float dt = mTimer.tick();
+        mViewport.update(dt); //added this
         render();
     }
 
@@ -94,7 +95,7 @@ public class GLGameView extends GLSurfaceView implements IGameView, GLSurfaceVie
         int count = mGameObjects.size();
         for(int i = 0; i < count; i++) {
             if(GLViewport.class.isInstance(mGameObjects.get(i))){
-                mViewport = (GLViewport)mGameObjects.get(i);
+                mViewport = (GLViewport) mGameObjects.get(i);
             }
         }
     }

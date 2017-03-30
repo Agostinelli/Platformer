@@ -3,7 +3,6 @@ package com.example.manfredi.platformer.engine;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
-
 import com.example.manfredi.platformer.App;
 import com.example.manfredi.platformer.GL.GLBorder;
 import com.example.manfredi.platformer.GL.GLGameObject;
@@ -49,7 +48,7 @@ public class GameEngine {
         int width = Resources.getSystem().getDisplayMetrics().widthPixels;
         int height = Resources.getSystem().getDisplayMetrics().heightPixels;
         mCamera = new GLViewport(width, height, METERS_TO_SHOW_X, METERS_TO_SHOW_Y);
-        mCamera.setBounds(0,0,mWorldWidth, mWorldHeight);
+        mCamera.setBounds(0,0, mWorldWidth, mWorldHeight);
         mPlayer = new GLSpaceship(this, mWorldWidth/2, mWorldHeight/2);
         GLBorder border = new GLBorder(mWorldWidth, mWorldHeight);
         mGameObjects.add(border);

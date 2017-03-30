@@ -20,7 +20,7 @@ public class VirtualJoystick extends InputManager {
     public VirtualJoystick(View view) {
         view.findViewById(R.id.joystick_region).setOnTouchListener(new JoystickTouchListener());
         view.findViewById(R.id.button_region).setOnTouchListener(new ActionButtonTouchListener());
-        mMaxDistance = Utils.dpToPx(48 * 2); //48dp = minimum hit target.
+        mMaxDistance = Utils.dpToPx(48 * 2);
         Log.d(TAG, "MaxDistance (pixels): " + mMaxDistance);
     }
 

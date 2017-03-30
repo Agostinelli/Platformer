@@ -27,16 +27,17 @@ public class GLSpaceship extends GLGameObject {
         float height = 20;
         float halfW = width/2;
         float halfH = height/2;
-        float[] vertices = new float[] {
+        float[] vertices =  {
                 -halfW, -halfH, 0,
                 halfW, -halfH, 0,
                 0, halfH, 0
         };
-        mModel = new GLModel(vertices, null);
+        mModel = new GLModel(vertices);
     }
 
     @Override
     public void update(float dt) {
+        //Log.d("oriz: ", mEngine.mControl.mHorizontalFactor + " ");
         mRotation += mEngine.mControl.mHorizontalFactor * (mMaxRotationSpeed * dt);
         float accel = mEngine.mControl.mVerticalFactor * mThrust;
         float angle = (mRotation-90) * TO_RADIANS;
@@ -47,10 +48,9 @@ public class GLSpaceship extends GLGameObject {
         mVelX = Utils.clamp(mVelX, -mMaxVelocity, mMaxVelocity);
         mVelY = Utils.clamp(mVelY, -mMaxVelocity, mMaxVelocity);
         mPos.x += mVelX;
-        mPos.y = mVelY;
+        mPos.y += mVelY;
         mVelX *= mFriction;
         mVelY *= mFriction;
-
     }
 
 }

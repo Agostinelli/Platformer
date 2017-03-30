@@ -96,7 +96,6 @@ public class MainActivity extends AppCompatActivity implements android.hardware.
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        super.onStop();
         mGameEngine.stopGame();
     }
 
